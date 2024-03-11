@@ -13,24 +13,24 @@ using System.Windows.Threading;
 
 namespace Figure
 {
-    /// <summary>
-    /// webcam_page.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class webcam_page : Page
     {
         // 필요한 변수 선언
+        
         VideoCapture cam;
         Mat frame, test;
         DispatcherTimer timer;
         bool is_initCam, is_initTimer;
         string save;
         string tor;
-        private NetworkStream stream;
-        private TcpClient client;
+        
+        //public NetworkStream stream;
+        //public TcpClient client;
         public webcam_page()
         {
             InitializeComponent();
         }
+
         private void windows_loaded(object sender, RoutedEventArgs e)
         {
             // 카메라, 타이머(0.01ms 간격) 초기화
@@ -112,13 +112,12 @@ namespace Figure
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-
+            
             string message = "2 / Red Square / 2023 - 01 - 23 - 16 - 32 - 12 / 1번라인 / 박철두 / pass";
             byte[] data = Encoding.Default.GetBytes(message);
-
-            stream = client.GetStream();
-
-            stream.Write(data, 0, data.Length);
+            
+            start_page.stream = start_page.client.GetStream();
+            start_page.stream.Write(data, 0, data.Length);
             MessageBox.Show("2하잉2");
         }
 
@@ -132,7 +131,7 @@ namespace Figure
             {
                 //stream null값인지 확인해보기
                 byte[] errorReport = Encoding.Default.GetBytes(img_message);
-                stream.Write(errorReport, 0, errorReport.Length);//4/오류사진
+                start_page.stream.Write(errorReport, 0, errorReport.Length);//4/오류사진
 
                 //데이터 크기 보내고
                 byte[] size = new byte[4];
@@ -141,13 +140,13 @@ namespace Figure
                 size = Encoding.Default.GetBytes(fileLength.ToString());
                 //string a = fileLength.ToString();
                 //size = Encoding.Default.GetBytes(a);
-                stream.Write(size, 0, 4);
+                start_page.stream.Write(size, 0, 4);
                 System.Windows.MessageBox.Show("송신 데이터 크기 : " + BitConverter.ToInt32(size, 0).ToString());
 
                 byte[] imageData = new byte[fileLength];
 
                 filestr.Read(imageData, 0, imageData.Length);//파일읽어서 배열에 넣고
-                stream.Write(imageData, 0, imageData.Length);//송신
+                start_page.stream.Write(imageData, 0, imageData.Length);//송신
 
                 System.Windows.MessageBox.Show("파일전송완료");
                 filestr.Close();//닫기추가
