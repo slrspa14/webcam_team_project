@@ -110,6 +110,7 @@ namespace Figure
             return shape;
         }
 
+
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
 
