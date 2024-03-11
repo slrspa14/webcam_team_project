@@ -208,6 +208,7 @@ namespace Figure
                     Cv2.PutText(frame, pnt + "Yellow" + shape, new Point(cx, cy), HersheyFonts.HersheySimplex, 0.5, Scalar.Yellow, 2);
                     //화면에 표기 출력할놈 //텍스트           //좌표            //폰트                             글자색
                     yel++;
+                    cnt++;//개수 구별용
                 }
             }
             foreach (var c in contours2)
@@ -225,6 +226,7 @@ namespace Figure
                     tor = "Green_" + shape;
                     Cv2.PutText(frame, pnt + "Green " + shape, new Point(cx, cy), HersheyFonts.HersheySimplex, 0.5, Scalar.Green, 2);
                     gre++;
+                    cnt++;//개수 구별용
                 }
             }
             foreach (var c in contours3)
@@ -242,6 +244,7 @@ namespace Figure
                     tor = pnt + "Red_" + shape;
                     Cv2.PutText(frame, pnt + " Red " + shape, new Point(cx, cy), HersheyFonts.HersheySimplex, 0.5, Scalar.Red, 2);
                     red++;
+                    cnt++;//개수 구별용
                 }
             }
             foreach (var c in contours4)
@@ -261,7 +264,8 @@ namespace Figure
                     var cy = (int)(M.M01 / M.M00);
                     tor = "Blue_" + shape;
                     Cv2.PutText(frame, pnt + " Blue " + shape, new Point(cx, cy), HersheyFonts.HersheySimplex, 0.5, Scalar.Blue, 2);
-                    blu++;
+                    blu++;//색
+                    cnt++;//개수 구별용
                 }
 
             }
