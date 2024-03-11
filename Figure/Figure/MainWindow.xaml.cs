@@ -1,4 +1,7 @@
 ﻿using System.Windows;
+using System;
+using System.Text;
+using System.Net.Sockets;
 
 
 namespace WPF
@@ -12,7 +15,7 @@ namespace WPF
         }
         private void windows_loaded(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("클라이언트 접속");
+            MessageBox.Show("클라이언트 접속");
         }
     }
 }

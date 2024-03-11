@@ -13,12 +13,12 @@ namespace Figure
     /// </summary>
     public partial class start_page : Page
     {
-        private NetworkStream stream;
-        private TcpClient client;
+        static public NetworkStream stream;
+        static public TcpClient client;
         public start_page()
         {
             InitializeComponent();
-            //서버 연결용
+            ////서버 연결용
             string message = "1 / 1번라인";//서버 라인 확인용
             try
             {
@@ -28,16 +28,12 @@ namespace Figure
                 client = new TcpClient();
                 //client.Connect("192.168.219.105", 33323);      // 연결
                 //client.Connect("192.168.35.105", 9195);//노트북
-                client.Connect("10.10.20.106", 9199);//개발원
+                client.Connect("10.10.20.106", 9191);//개발원
                 System.Windows.MessageBox.Show("1");
                 byte[] data = Encoding.Default.GetBytes(message);
                 stream = client.GetStream();
                 stream.Write(data, 0, data.Length);// 메세지 보냄
                 System.Windows.MessageBox.Show("2");
-
-                //----------------------------------------------------------------------------------------
-                //stream.Close();
-                //client.Close();
             }
             catch (SocketException ex)
             {
