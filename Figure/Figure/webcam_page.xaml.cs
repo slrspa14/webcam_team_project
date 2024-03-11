@@ -21,9 +21,11 @@ namespace Figure
         Mat frame, test;
         DispatcherTimer timer;
         bool is_initCam, is_initTimer;
-        string save;
-        string tor;
-        
+        string save, tor;
+        string work_detail = start_page.work_detail;//전 페이지에서 받은 작업내용 사용하려고
+        string shape = "unidentified";
+        int cnt = 0;
+
         //public NetworkStream stream;
         //public TcpClient client;
         public webcam_page()
@@ -81,7 +83,7 @@ namespace Figure
 
         private string GetShape(Point[] c)
         {
-            string shape = "unidentified";
+            //string shape = "unidentified";
             double peri = Cv2.ArcLength(c, true);
             Point[] approx = Cv2.ApproxPolyDP(c, 0.04 * peri, true);
 
@@ -110,15 +112,14 @@ namespace Figure
             return shape;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs e)//문제없을때의 전송내용버튼
         {
-            
             string message = "2 / Red Square / 2023 - 01 - 23 - 16 - 32 - 12 / 1번라인 / 박철두 / pass";
             byte[] data = Encoding.Default.GetBytes(message);
             
             start_page.stream = start_page.client.GetStream();
             start_page.stream.Write(data, 0, data.Length);
-            MessageBox.Show("2하잉2");
+            //MessageBox.Show("2하잉2");//확인용
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -157,16 +158,15 @@ namespace Figure
                 System.Windows.MessageBox.Show(file.ToString());
             }
 
-        }
+        }//파일전송버튼
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)//캡처버튼
         {
             Cam_cpature.Source = OpenCvSharp.WpfExtensions.WriteableBitmapConverter.ToWriteableBitmap(frame);//화면안나와서 오류
             save = DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");            // 현재 시간
             Cv2.ImWrite("../../" + save + ".png", frame);
             //VideoWriter recodetest = new VideoWriter("./" + save + ".avi", FourCC.XVID, 24, frame.Size());
         }
-
         private void timer_tick(object sender, EventArgs e)
         {
             frame = new Mat(); //
@@ -265,8 +265,77 @@ namespace Figure
                 }
 
             }
-
             Cam.Source = OpenCvSharp.WpfExtensions.WriteableBitmapConverter.ToWriteableBitmap(frame);
         }
+        private void Work()
+        {
+            switch (work_detail)
+            {
+                case "1/":
+                    if (shape == "Pentagon" && tor == "Red" && cnt == 4)//조건이랑 맞다면
+                    {
+                        string message = "2 / Red Square / 2023 - 01 - 23 - 16 - 32 - 12 / 1번라인 / 박철두 / pass";
+                        byte[] data = Encoding.Default.GetBytes(message);
+
+                        start_page.stream = start_page.client.GetStream();
+                        start_page.stream.Write(data, 0, data.Length);
+                    }
+                    else //오류일때 캡처하고 전송하기
+                    {
+                        
+                        string save_1 = DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss"); //캡처한거 저장
+                        Cv2.ImWrite("../../" + save_1 + ".png", frame);//파일 이름설정
+                        try
+                        {
+                            string img_message = "4/오류 사진 보냅니다.";
+                            //stream null값인지 확인해보기
+                            byte[] errorReport = Encoding.Default.GetBytes(img_message);
+                            start_page.stream.Write(errorReport, 0, errorReport.Length);//4/오류사진
+
+                            //데이터 크기 보내고
+                            byte[] size = new byte[4];
+                            FileStream filestr = new FileStream("../../" + save_1 + ".png", FileMode.Open, FileAccess.Read);
+                            int fileLength = (int)filestr.Length;
+                            size = Encoding.Default.GetBytes(fileLength.ToString());
+                            //string a = fileLength.ToString();
+                            //size = Encoding.Default.GetBytes(a);
+                            start_page.stream.Write(size, 0, 4);
+                            MessageBox.Show("송신 데이터 크기 : " + BitConverter.ToInt32(size, 0).ToString());
+
+                            byte[] imageData = new byte[fileLength];
+
+                            filestr.Read(imageData, 0, imageData.Length);//파일읽어서 배열에 넣고
+                            start_page.stream.Write(imageData, 0, imageData.Length);//송신
+
+                            MessageBox.Show("파일전송완료");
+                            filestr.Close();//닫기추가
+                        }
+                        catch (SocketException file)
+                        {
+                            Console.Write(file);
+                            System.Windows.MessageBox.Show(file.ToString());
+                        }
+                        
+                    }
+                    break;
+
+                case "2/":
+
+                    break;
+
+                case "3/":
+
+                    break;
+
+                case "4/":
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        
     }
 }
